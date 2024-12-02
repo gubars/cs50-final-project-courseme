@@ -22,3 +22,26 @@ def close_db(e=None):
 
     if db is not None:
         db.close()
+
+def init_db():
+    # Returns database connection
+    db = get_db()
+
+    with current_app.open_resource('schema.sql') as f:
+        db.executescript(f.read().decode('utf8'))
+
+# Calls the init_db function and shows success message to user
+@click.command('init-db')
+def init_db_command():
+    init_db()
+    click.echo('Initialized the database.')
+
+sqlite3.register_converter(
+    "timestamp", lambda v: datetime.fromisoformat(v.decode())
+)
+
+def init_app(app):
+    # Calls close_db when cleaning up
+    app.teardown_appcontext(close_db)
+    # Adds init_db_command that can be called with flask
+    app.cli.add_command(init_db_command)
