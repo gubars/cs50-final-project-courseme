@@ -2,6 +2,9 @@ import os
 
 from flask import Flask
 
+# References
+# - Used Flask documentation to get webpage setup, https://flask.palletsprojects.com/en/stable/tutorial/
+
 def create_app(test_config=None):
     # Creates and configures the app
     app = Flask(__name__, instance_relative_config=True)
@@ -33,5 +36,9 @@ def create_app(test_config=None):
 
     from . import auth
     app.register_blueprint(auth.bp)
+
+    from . import courses
+    app.register_blueprint(courses.bp)
+    app.add_url_rule('/', endpoint='index')
     
     return app

@@ -1,0 +1,356 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Survey
+{% endblock %}
+
+{% block main %}
+<form method="post">
+    <div class="card text-bg-danger mb-3">
+        <div class="card-header text-start">
+          Important
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item text-start">Note: If struggling with course input, please input the full, proper name of the course.</li>
+        </ul>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header text-start">
+            Personal Information
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item p-0">
+                <input type="text" name="first_name" class="form-control border-0" placeholder="First Name" required>
+            </li>
+            <li class="list-group-item p-0">
+                <input type="text" name="last_name" class="form-control border-0" placeholder="Last Name" required>
+            </li>
+            <li class="list-group-item p-0">
+                <input type="text" name="email" class="form-control border-0" placeholder="Email (optional)">
+            </li>
+        </ul>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header text-start">
+            Concentration Information
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item p-0">
+                <select id="concentration_type" name="concentration_type" class="form-select border-0" required>
+                    <option value="" disabled selected>Concentration Type</option>
+                    <option value="Single">Single</option>
+                    <option value="Double">Double</option>
+                    <option value="Joint">Joint</option>
+                </select>
+            </li>
+            <li class="list-group-item p-0">
+                <select name="concentration1" class="form-select border-0" required>
+                    <option value="" disabled selected>Concentration</option>
+                    {% for concentration in concentrationslist %}
+                        <option value="{{ concentration['id'] }}">{{ concentration['name'] }}</option>
+                    {% endfor %}
+                </select>
+            </li>
+            <li class="list-group-item p-0" id="concentration2item" style="display: none;">
+                <select name="concentration2" class="form-select border-0">
+                    <option value="" disabled selected>2nd Concentration</option>
+                    {% for concentration in concentrationslist %}
+                        <option value="{{ concentration['id'] }}">{{ concentration['name'] }}</option>
+                    {% endfor %}
+                </select>
+            </li>
+            <li class="list-group-item p-0">
+                <select id="secondary_type" name="secondary_type" class="form-select border-0" required>
+                    <option value="" disabled selected>Pursuing a secondary?</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </li>
+            <li class="list-group-item p-0" id="secondaryitem" style="display: none;">
+                <select name="secondary" class="form-select border-0">
+                    <option value="" disabled selected>Secondary</option>
+                    {% for secondary in secondarieslist %}
+                        <option value="{{ secondary['id'] }}">{{ secondary['name'] }}</option>
+                    {% endfor %}
+                </select>
+            </li>
+        </ul>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header text-start">
+            Semester Information
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item p-0">
+                <input type="number" name="year" class="form-control border-0" placeholder="Current Year" required>
+            </li>
+            <li class="list-group-item p-0">
+                <select name="current_semester" class="form-select border-0" required>
+                    <option value="" disabled selected>Current Semester</option>
+                    <option value="Fall">Fall</option>
+                    <option value="Spring">Spring</option>
+                </select>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="card mb-3">
+        <div class="card-header text-start">
+            Course Information
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item p-0">
+                <input id="semesters_completed" type="number" name="semesters_completed" class="form-control border-0" placeholder="How many semesters have you already completed or are in the process of completing?" required>
+            </li>
+        </ul>
+    </div>
+
+    <div id="semesters_container"></div>
+
+    <div class="card mb-3">
+        <div class="card-header text-start">
+            Additional Information
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item p-0">
+                <input type="number" name="num_courses_want" class="form-control border-0" placeholder="How many courses would you like to take next semester?" required>
+            </li>
+            <li class="list-group-item p-0">
+                <select name="want_gened" class="form-select border-0" required>
+                    <option value="" disabled selected>Would you like to take a GenEd next semester?</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </li>
+            <li class="list-group-item p-0">
+                <select name="want_grad" class="form-select border-0" required>
+                    <option value="" disabled selected>Would you like to take graduate level courses next semester?</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </li>
+            <li class="list-group-item p-0">
+                <select name="want_9am" class="form-select border-0" required>
+                    <option value="" disabled selected>Would you like to take courses that start at 9am next semester?</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </li>
+            <li class="list-group-item p-0">
+                <select name="want_conc_req" class="form-select border-0" required>
+                    <option value="" disabled selected>Would you like to take mainly concentration requirements next semester?</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        // JavaScript to toggle the second concentration dropdown based on the concentration type selected
+        document.getElementById('concentration_type').addEventListener('change', function() {
+            var concentration_type = this.value;
+            var concentration2item = document.getElementById('concentration2item');
+            
+            if (concentration_type === 'Single') {
+                concentration2item.style.display = 'none';
+            } else if (concentration_type === 'Double' || concentration_type === 'Joint') {
+                concentration2item.style.display = '';
+            }
+        });
+    
+        // Toggle secondary information visibility
+        document.getElementById('secondary_type').addEventListener('change', function() {
+            var secondary_type = this.value;
+            var secondaryitem = document.getElementById('secondaryitem');
+    
+            if (secondary_type === 'Yes') {
+                secondaryitem.style.display = '';
+            } else if (secondary_type === 'No') {
+                secondaryitem.style.display = 'none';
+            }
+        });
+    
+        document.addEventListener("DOMContentLoaded", () => {
+            const semestersContainer = document.getElementById("semesters_container");
+            const semestersInput = document.getElementById("semesters_completed");
+    
+            // Function to create a new semester card
+            function createSemesterCard(semesterNumber) {
+                const card = document.createElement("div");
+                card.classList.add("card", "mb-3");
+    
+                const cardHeader = document.createElement("div");
+                cardHeader.classList.add("card-header", "text-start");
+                cardHeader.textContent = `Semester ${semesterNumber}`;
+                card.appendChild(cardHeader);
+    
+                const listGroup = document.createElement("ul");
+                listGroup.classList.add("list-group", "list-group-flush");
+    
+                // Create 4 default courses
+                for (let i = 0; i < 4; i++) {
+                    const listItem = document.createElement("li");
+                    listItem.classList.add("list-group-item", "p-0");
+    
+                    const input = document.createElement("input");
+                    input.classList.add("form-control", "border-0", "course-input");
+                    input.placeholder = `Course ${i + 1}`;
+                    input.setAttribute("data-semester", semesterNumber);  // Add data attribute
+                    input.setAttribute("name", `course_${semesterNumber}_${i + 1}`);
+                    listItem.appendChild(input);
+                    listGroup.appendChild(listItem);
+    
+                    // Add course search functionality
+                    addCourseSearchFunctionality(input);
+                }
+    
+                card.appendChild(listGroup);
+    
+                // Add button for extra courses
+                const addButton = document.createElement("button");
+                addButton.classList.add("btn", "btn-danger", "mt-2");
+                addButton.textContent = "Add a course";
+                addButton.setAttribute("type", "button");
+                addButton.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    addCourse(card, semesterNumber);
+                });
+                card.appendChild(addButton);
+    
+                semestersContainer.appendChild(card);
+            }
+    
+            // Function to add extra courses
+            function addCourse(card, semesterNumber) {
+                const courses = card.querySelectorAll(".list-group-item");
+                if (courses.length >= 7) {
+                    alert("Maximum 7 courses per semester.");
+                    return;
+                }
+                const listItem = document.createElement("li");
+                listItem.classList.add("list-group-item", "p-0");
+    
+                const input = document.createElement("input");
+                input.classList.add("form-control", "border-0", "course-input");
+                input.placeholder = `Course ${courses.length + 1}`;
+                input.setAttribute("data-semester", semesterNumber);
+                input.setAttribute("name", `course_${semesterNumber}_${courses.length + 1}`);
+                listItem.appendChild(input);
+    
+                const listGroup = card.querySelector(".list-group");
+                listGroup.appendChild(listItem);
+    
+                addCourseSearchFunctionality(input);
+                input.focus();
+            }
+    
+            // Function to add search functionality to each input element
+            function addCourseSearchFunctionality(inputElement) {
+    const courseSuggestions = document.createElement('ul');
+    courseSuggestions.classList.add('dropdown-menu');
+    courseSuggestions.style.position = 'absolute';
+    courseSuggestions.style.zIndex = '1000';
+    courseSuggestions.style.color = 'black'; // Ensure dropdown text is black
+    courseSuggestions.style.display = 'none'; // Hide dropdown initially
+    inputElement.parentElement.style.position = 'relative'; // Position relative to parent
+    inputElement.parentElement.appendChild(courseSuggestions);
+
+    let currentSuggestions = []; // Cache the current suggestions to avoid re-rendering unnecessarily
+
+    // Function to update the dropdown content
+    function updateDropdown(courses) {
+        // If the suggestions are the same, don't re-render
+        if (JSON.stringify(currentSuggestions) === JSON.stringify(courses)) return;
+
+        currentSuggestions = courses; // Update cached suggestions
+        courseSuggestions.innerHTML = ''; // Clear previous suggestions
+
+        if (courses.length > 0) {
+            courses.forEach(course => {
+                const suggestionItem = document.createElement('li');
+                suggestionItem.classList.add('dropdown-item');
+                suggestionItem.textContent = `${course.subjectDescription} ${course.catalogNumber}: ${course.title}`;
+                suggestionItem.dataset.courseId = course.id;
+
+                suggestionItem.addEventListener('click', () => {
+                    inputElement.value = `${course.subjectDescription} ${course.catalogNumber}: ${course.title}`;
+                    courseSuggestions.innerHTML = ''; // Clear suggestions
+                    courseSuggestions.style.display = 'none'; // Hide dropdown
+                });
+
+                courseSuggestions.appendChild(suggestionItem);
+            });
+            courseSuggestions.style.display = 'block'; // Show dropdown
+        } else {
+            const noResultItem = document.createElement('li');
+            noResultItem.classList.add('dropdown-item');
+            noResultItem.textContent = 'No courses found';
+            courseSuggestions.appendChild(noResultItem);
+            courseSuggestions.style.display = 'block'; // Show dropdown
+        }
+    }
+
+    // Event listener for input
+    inputElement.addEventListener('input', function () {
+        const query = this.value.trim();
+
+        if (query.length >= 2) {
+            fetch(`/search_courses?query=${query}`)
+                .then(response => response.json())
+                .then(courses => {
+                    // Display only the first 4 suggestions
+                    updateDropdown(courses.slice(0, 5));
+                })
+                .catch(error => console.error('Error fetching courses:', error));
+        } else {
+            currentSuggestions = []; // Clear cached suggestions
+            courseSuggestions.style.display = 'none'; // Hide dropdown if query is too short
+        }
+    });
+
+    // Hide suggestions when clicking outside the input or dropdown
+    document.addEventListener('click', (e) => {
+        if (!inputElement.contains(e.target) && !courseSuggestions.contains(e.target)) {
+            courseSuggestions.style.display = 'none';
+        }
+    });
+
+    // Prevent dropdown from showing on focus without typing
+    inputElement.addEventListener('focus', () => {
+        if (inputElement.value.length < 2) {
+            courseSuggestions.style.display = 'none';
+        }
+    });
+
+    // Ensure dropdown hides if the input is cleared
+    inputElement.addEventListener('blur', () => {
+        setTimeout(() => {
+            if (!inputElement.value.trim()) {
+                courseSuggestions.style.display = 'none';
+            }
+        }, 100);
+    });
+}
+
+    
+            // Generate semester cards based on input
+            semestersInput.addEventListener("input", (e) => {
+                const semesters = parseInt(e.target.value);
+                if (!isNaN(semesters) && semesters > 0) {
+                    semestersContainer.innerHTML = '';
+                    for (let i = 1; i <= semesters; i++) {
+                        createSemesterCard(i);
+                    }
+                }
+            });
+        });
+    </script>
+    
+    <button type="submit" class="btn btn-danger">Generate my courses!</button>
+</form>
+{% endblock %}

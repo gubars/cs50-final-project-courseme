@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+    {% if g.user %}
+    <div class="card mb-3 text-bg-danger">
+        <div class="row g-0">
+          <div class="col-md-12">
+            <div class="card-body">
+              <h5 class="card-title">Welcome, {{ g.user['username'] }}!</h5>
+              <p class="card-text" >Thank you for registering with CourseMe! You're soon on your way to using the best way to discover and search for classes for your next semester at Harvard! To generate your courses, please take the survey found below or in the navigation bar above. To view your courses, please navigate to the courses page using the button below or navigation bar above. </p>
+              <div class="mt-3">
+                <a href="{{ url_for('courses.survey') }}" class="btn btn-dark w-100">Take the Onboarding Survey</a>
+            </div>
+            <div class="mt-3">
+                <a href="{{ url_for('courses.courses') }}" class="btn btn-dark w-100">View Your Recommended Courses</a>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% else %}
+    <div class="card mb-3 text-bg-danger">
+        <div class="row g-0">
+          <div class="col-md-12">
+            <div class="card-body">
+              <h5 class="card-title">Welcome to CourseMe!</h5>
+              <p class="card-text" >CourseMe is the best way to discover and search for classes for your next semester at Harvard! All you need to do is fill in a few questions about your concentration, what courses you've taken so far, what you're interested in, and CourseMe will give you a set of 4-7 recommended courses for you to take next semester. To try CourseMe out, register a new account below, or log in to an existing account using the buttons below or the navigation bar above. </p>
+              <div class="mt-3">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-dark w-100">Register a New Account</a>
+            </div>
+            <div class="mt-3">
+                <a href="{{ url_for('auth.login') }}" class="btn btn-dark w-100">Log In to an Existing Account</a>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+{% endblock %}

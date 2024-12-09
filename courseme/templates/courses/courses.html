@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Courses
+{% endblock %}
+
+{% block main %}
+<div class="card text-bg-danger mb-3">
+    <div class="card-header text-start">
+      Course Recommendations
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item text-start">Thanks for filling out the onboarding survey, {{ first_name }}. Please find your recommended courses below. If you find a course to not be to your liking, please feel free to refresh the page to receive some new courses. Note: This occurs whenever you visit the page again, so if you find a course you like the look of, ensure to note it down. </li>
+    </ul>
+</div>
+<div class="row row-cols-1 row-cols-md-{{ num_courses_want }} g-4">
+    {% for course in recommended_courses %}
+    <div class="col">
+      <div class="card text-bg-danger mb-3">
+        <div class="card-header">{{  course.subjectDescription  }} {{course.catalogNumber  }}: {{ course.title }}</div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item text-start">Subject: {{ course.subjectDescription }}</li>
+            <li class="list-group-item text-start">Catalog Number: {{ course.catalogNumber }}</li>
+            <li class="list-group-item text-start">Title: {{ course.title }}</li>
+            <li class="list-group-item text-start">Description: {{ course.description | safe }}</li>
+        </ul>
+      </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

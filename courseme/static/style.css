@@ -1,0 +1,21 @@
+.dropdown-menu {
+    max-height: 200px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    padding: 0; /* Remove unnecessary padding */
+    margin: 0;
+    list-style: none; /* Remove bullets */
+    display: none; /* Hide dropdown by default */
+}
+.dropdown-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    color: black; /* Ensure dropdown text is black */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+}

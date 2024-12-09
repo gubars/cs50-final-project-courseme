@@ -7,6 +7,9 @@ from courseme.db import get_db
 # Creates 'auth' blueprint
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+# References
+# - Used Flask documentation to get webpage setup, https://flask.palletsprojects.com/en/stable/tutorial/
+
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
@@ -23,6 +26,8 @@ def register():
             error = 'Password is required.'
         elif not confirmation:
             error = 'Confirmation is required.'
+        elif password != confirmation:
+            error = 'Password and confirmation must match.'
 
         # Creates a hash of the users password
         hash = generate_password_hash(password)
@@ -32,10 +37,14 @@ def register():
             try:
                 db.execute("INSERT INTO user (username, password) VALUES (?, ?)", (username, hash)),
                 db.commit()
+
+                
+                user = db.execute("SELECT * FROM user WHERE username = ?", (username,)).fetchone()
+                session.clear()
+                session['user_id'] = user['id']
+                return redirect(url_for("index"))
             except db.IntegrityError:
                 error = f"User {username} is already registered."
-            else:
-                return redirect(url_for("auth.login"))
 
         flash(error)
 

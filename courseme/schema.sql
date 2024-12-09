@@ -1,12 +1,15 @@
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS concentrations;
 DROP TABLE IF EXISTS secondaries;
 DROP TABLE IF EXISTS instructors;
 DROP TABLE IF EXISTS courses;
 DROP TABLE IF EXISTS meeting_patterns;
 DROP TABLE IF EXISTS profiles;
+DROP TABLE IF EXISTS user_courses;
+DROP TABLE IF EXISTS course_gened_area;
+DROP TABLE IF EXISTS course_divisional_dist;
 
-CREATE TABLE users (
+CREATE TABLE user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL
@@ -72,36 +75,42 @@ CREATE TABLE profiles (
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     email TEXT,
-    concentration1_id INTEGER NOT NULL,
+    concentration1_id INTEGER,
     concentration2_id INTEGER,
     secondary_id INTEGER,
     year INTEGER NOT NULL,
     current_semester TEXT NOT NULL,
-    is_double BOOLEAN NOT NULL DEFAULT 0,
-    is_joint BOOLEAN NOT NULL DEFAULT 0,
-    taken_expos BOOLEAN NOT NULL DEFAULT 0,
-    taken_language BOOLEAN NOT NULL DEFAULT 0,
-    divisional_taken BOOLEAN NOT NULL DEFAULT 0,
-    taken_arts BOOLEAN NOT NULL DEFAULT 0,
-    taken_science BOOLEAN NOT NULL DEFAULT 0,
-    taken_social BOOLEAN NOT NULL DEFAULT 0,
-    taken_quantitative BOOLEAN NOT NULL DEFAULT 0,
-    geneds_taken INTEGER NOT NULL,
-    taken_gened_aesthetics BOOLEAN NOT NULL DEFAULT 0,
-    taken_gened_ethics BOOLEAN NOT NULL DEFAULT 0,
-    taken_gened_histories BOOLEAN NOT NULL DEFAULT 0,
-    taken_gened_science BOOLEAN NOT NULL DEFAULT 0,
     num_courses_want INTEGER NOT NULL,
-    want_language BOOLEAN NOT NULL DEFAULT 0,
     want_gened BOOLEAN NOT NULL DEFAULT 0,
+    want_grad BOOLEAN NOT NULL DEFAULT 0,
     want_9am BOOLEAN NOT NULL DEFAULT 0,
     want_conc_req BOOLEAN NOT NULL DEFAULT 0,
-    num_credits INTEGER NOT NULL,
-    concentration1_complete BOOLEAN NOT NULL DEFAULT 0,
-    concentration2_complete BOOLEAN,
-    secondary_complete BOOLEAN, 
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (concentration1_id) REFERENCES concentrations(id),
     FOREIGN KEY (concentration2_id) REFERENCES concentrations(id),
     FOREIGN KEY (secondary_id) REFERENCES secondaries(id)
+);
+
+CREATE TABLE user_courses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    course_id INTEGER NOT NULL,
+    semester TEXT NOT NULL,
+    year INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (course_id) REFERENCES courses(id)
+);
+
+CREATE TABLE course_gened_area (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    course_id INTEGER NOT NULL,
+    gened_area TEXT NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES courses(id)
+);
+
+CREATE TABLE course_divisional_dist (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    course_id INTEGER NOT NULL,
+    divisional_dist TEXT NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES courses(id)
 );
