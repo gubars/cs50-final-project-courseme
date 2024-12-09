@@ -20,7 +20,29 @@ index() is a very simple function, and just renders the template with a route to
 
 ### survey
 
-survey() is a much more complicated function, and handles all of the survey functionality that allows the users relevant data to be inserted into the database. First, we get the users id as well as form a connection with the database. We then receive a list of all the concentrations, and a list of all the secondaries. Then, under a POST request method, we obtain all of the information from the form, validate our form fields, convert the "want_x" to booleans, and attempt to insert into the profiles table. After the data has been inserted into the profiles table, we then redirect to courses.html.
+survey() is a much more complicated function, with a route to "/survey" naturally, and handles all of the survey functionality that allows the users relevant data to be inserted into the database. First, we get the users id as well as form a connection with the database. We then receive a list of all the concentrations, and a list of all the secondaries. Then, under a POST request method, we obtain all of the information from the form, validate our form fields, convert the "want_x" to booleans, and attempt to insert into the profiles table. After the data has been inserted into the profiles table, we then redirect to courses.html.
+
+### parse_course_code
+
+parse_course_code(catalog_number) was made quite late in the design process. I needed a function that could test if a person who is taking 22A would be recommended 22B. So I initially tried to use the previous split functionality to seperate this into a number, and a letter. However, this did not work, so I asked GPT-4o, and it recommended me to use re and match. From here, I then had from each catalog number a number and some letters, which I could then use to detect sequential courses.
+
+### time_to_datetime
+
+This was a function that just converted a time string in meeting patterns to a datetime object, which was useful for checking if times overlapped and whatnot.
+
+### check_time_overlap
+
+This function converted all of the time strings into datetimes and then returned a boolean as to whether the times overlapped or not. 
+
+### course_meets_on_same_day_and_no_overlap
+
+This function first detected if there were "common days" between each day, and if there are, then they checked if there was an overlap. If there was an overlap, using the check_time_overlap function, then it would return True. If not, it returns false, as there was no overlap on the day. If there were no common days, then it returns false anyways because it is impossible for them to overlap on different days.
+
+### courses
+
+courses() handles everything for courses.html. When I was originally thinking about the structure of my project, I was planning on having the algorithm separate to courses(), however I felt that given the complexity of my algorithm, it would make the most sense both complexity and time wise to have it in courses(). courses() gets all of the information from "profile" and then uses this information to assign a "course_score" to each course as the program iterates through the datebase. First, courses() gets the course ids from the courses that the user has completed, as well as additional details about the courses that the user has completed. If the user submits some number of courses that they want, then we also get all courses, randomizing the order of these each time to ensure there is some variety. I also have a flag, gened_selected, which allows us to only pick one gened. There is first an initial filtration process, with filtering out courses that the user has completed, 9ams if they dont want them, geneds if they dont want them, and graduate level courses if they dont want them. From here, a course_score is initialized. From here, we start to boost the score if they havent taken courses in their intended concentration, if its the same subject as their concentration, etc. There is also some additional functionality that boosts courses that are sequential (eg CS50 to CS51, CS61, CS161) as well as courses that are sequential by letter (eg Math 22A, 22B, 25A, 25B, Physics 15A, 15B, 15C, Ec10A, Ec10B, etc.). This means that the algorithm is ultimately optimized for people who are on some sort of course track, however there is more room to improve regarding making these courses actually optimal or not. From here, we sort the corses, filter out overlapping courses, and then filter out by the number of courses that the user wants!
+
+### search_courses_route
 
 # auth.py
 
@@ -45,3 +67,5 @@ index.html is a little bit more complicated. Of course, the html file extends la
 ### survey.html
 
 # static
+
+### styles.css
