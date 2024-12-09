@@ -44,6 +44,8 @@ courses() handles everything for courses.html. When I was originally thinking ab
 
 ### search_courses_route
 
+This function receives a query, searches for courses using the search_courses function, converts to a list of dictionaries, and then uses jsonify() to convert it to a JSON for the client. Using JSON was recommended by GPT-4o and CoPilot, and I had no idea how to implement this with the JS in survey.html, so I used the JS and JSON documentation as well as GPT to help me learn and implement this.
+
 # auth.py
 
 # __init__.py
