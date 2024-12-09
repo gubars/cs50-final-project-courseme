@@ -1,5 +1,5 @@
 # cs50-final-project-courseme
-A website that provides you with a course schedule for next semester given the semester you're in, your concentration, and any preferences you have, built as the final project for CS50. Users can log in, receive a course schedule, and export to their Google Calendar. Built with HTML, CSS, JavaScript, Bootstrap, Python, Flask, and SQL.
+A website that provides you with a course schedule for next semester given the semester you're in, your concentration, and any preferences you have, built as the final project for CS50. Users can log in and receive a course schedule. Built with HTML, CSS, JavaScript, Bootstrap, Python, Flask, and SQL.
 
 To use the website, register for an account, take the onboarding survey, and then receive your recommended courses! If you are unhappy with your recommended courses, then please refresh the page. Below is some information on how to navigate the repo incase there are any issues with the files or getting the webpage setup on your computer.
 
