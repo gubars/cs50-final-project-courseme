@@ -48,19 +48,59 @@ This function receives a query, searches for courses using the search_courses fu
 
 # auth.py
 
+This followed a very similar structure to the Flask documentation in terms of getting login.html and register.html setup.
+
+### register
+
+This is a classic register function, with a password and confirmation for said password. After all the checks, we generate a hash using the werkzeug.security library, then insert into the database as usual.
+
+### login
+
+This function allows the user to, naturally, login. It gets the username, password, checks if they are in the database, and if they are, we set the session id to the users id, and we go to index.
+
+### load_logged_in_user
+
+This function provides the implementation to have conditionals like if g.user to check if a logged in or not. Essentially, it sets up g.user, which was often used to get the users id, or to check if they were logged in or not on the HTML pages.
+
+### logout
+
+This function just clears the session to make sure that the user is no longer logged in, and then redirects the user to index, where they are of course, logged out.
+
+### login_required
+
+This function allows for the functionality to call login_required for pages like survey and courses. This is directly from the Flask documentation.
+
 # __init__.py
+
+This entirely follows from the flask documentation. It creates the app, has a test page, imports the database, imports auth, imports courses, and then returns the app.
 
 # templates
 
+This folder contains all of the relevant HTML files used in this webpage, each under a specific folder, but layout.html is outside of this folder.
+
+### layout.html
+
+When it came to designing the general layout of the website, I knew that using Bootstrap would make this process as easy as possible. I started with a general dynamic navbar that changed as to whether you were logged in or logged out. There was also a general section for the flashed messages, and a block to contain the main section of the html. I went with a red and black colour scheme to easily integrate with Bootstrap, as well as matching the CS50 and Harvard general colour scheme.
+
 ## auth
+
+Under the auth folder, we have both login.html and register.html. 
 
 ### login.html
 
+This is a very basic login.html page, of course extending layout.html, having a title of Log In, and having a form to input a username and password, which then links to auth.py and login().
+
 ### register.html
+
+This is also a very basic register.html page, extending layout.html, having a title of Register, and having a form to input a username, password, and confirmation, then linking to auth.py and register().
 
 ## courses
 
+The courses folder contains courses.html, index.html, and survey.html. These are the main HTML pages of the project, as they contain the survey, course recommendation page, as well as the homepage, index.
+
 ### courses.html
+
+This is a pretty simple HTML file, having a card with a general message telling the user thanks for filling out the survey, as well as some additional information on how to use the courses page. Underneath, depending on how many courses were recommended (how many the users wanted), a card is created for each course, that contains the courses description, catalognumber, title, and description. From here, the user can reload the page to generate new courses. The cards are made with a basic for loop, and the row dimension dynamically changes with the row-cols-md-{{ num_courses_want  }} allowing for the class to dynamically change with the number of classes that the user wants to take next semester.
 
 ### index.html
 
@@ -68,6 +108,12 @@ index.html is a little bit more complicated. Of course, the html file extends la
 
 ### survey.html
 
+When it came to making survey.html, I knew I wanted to integrate Bootstraps cards to implement each section of the survey/form. I then used the classes to make the borders for each card seamless, so the inputs looked like you were typing directly into the card, and made the overall survey a lot more clean in my opinion. I used concentrationslist and secondarieslist in a for loop to generate a list of all concentrations and a list of all secondaries so that the user can select from them. I then added some JavaScript functionality so that when a user selected their concentration type, it would create a new section of the card for the second concentration, or a new section of the card for their secondary. I also wanted functionality that could dynamically create semester cards depending on how many semesters the user inputs. I used JavaScript and help from GPT and CoPilot to solve this issue, creating a function that would create a new card, add 4 courses by default using a for loop, add search functionality to each one, and add a button to add extra courses on the bottom of each card. This button called a function to add a course, which essentially had very similar functionality to the card creating function, except I only had to create a "li" element. For each course, I needed search functionality that would search directly from the database that I had setup earlier. With the help of GPT and CoPilot, I set up a dropdown menu that could have an input (query) that would be fed into the search_courses function, receive an output, and then display the first 5 of these outputs, dynamically changing when necessary. After this, I then fetched the input to the number of courses wanted section that would dynamically create the relevant number of semester cards. I also ended up having a problem with some inputs like "Math 22" not appearing, so I added a note at the top of the page to warn anyone of this issue.
+
 # static
 
+This contains styles.css, my own custom CSS.
+
 ### styles.css
+
+This mainly affects survey.html, as styles.css is entirely to do with the dropdown that appears in survey.html and how that dropdown looks, as I had a lot of problems with making not only the dropdown look good, but also make the dropdown appear in the first place. The CSS adds a white background to the dropdown with black font text, and when hovering over the dropdown, it goes grey to show that it can be selected.
